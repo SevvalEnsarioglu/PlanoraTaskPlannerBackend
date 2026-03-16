@@ -32,8 +32,8 @@ public class Task extends BaseEntity {
     @Builder.Default
     private Boolean isCompleted = false;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "priority")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "priority_id")
     private Priority priority;
 
     @ManyToOne(fetch = FetchType.LAZY)
