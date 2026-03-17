@@ -2,7 +2,7 @@ package com.sevval.PlanoraTaskPlannerBackend.model.dto.request;
 
 import java.time.LocalDateTime;
 
-public record PomodoroSessionRequestDTO(
+public record PomodoroRequestDTO(
         Integer durationInMinutes,
         LocalDateTime startTime,
         LocalDateTime endTime,

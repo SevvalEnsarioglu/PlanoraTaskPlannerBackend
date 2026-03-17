@@ -6,13 +6,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "pomodoro_sessions")
+@Table(name = "pomodoro")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PomodoroSession extends BaseEntity {
+public class Pomodoro extends BaseEntity {
 
     @Column(name = "duration_in_minutes", nullable = false)
     private Integer durationInMinutes;
