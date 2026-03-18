@@ -1,8 +1,11 @@
 package com.sevval.PlanoraTaskPlannerBackend.model.dto.request;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 public record PriorityRequestDTO(
-        String name,
+        @NotBlank String name,
         String colorCode,
-        Integer level
+        @NotNull Integer level
 ) {
 }

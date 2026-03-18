@@ -1,11 +1,12 @@
 package com.sevval.PlanoraTaskPlannerBackend.model.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 public record PomodoroRequestDTO(
-        Integer durationInMinutes,
+        @NotNull Integer durationInMinutes,
         LocalDateTime startTime,
         LocalDateTime endTime,
-        Long taskId
+        @NotNull Long taskId
 ) {
 }
