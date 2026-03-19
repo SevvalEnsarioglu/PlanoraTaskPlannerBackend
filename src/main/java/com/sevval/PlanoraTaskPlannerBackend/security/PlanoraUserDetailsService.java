@@ -16,7 +16,6 @@ public class PlanoraUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Spring Security auth manager için username=email
         User user = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return new PlanoraUserDetails(user.getId(), user.getEmail(), user.getPassword());

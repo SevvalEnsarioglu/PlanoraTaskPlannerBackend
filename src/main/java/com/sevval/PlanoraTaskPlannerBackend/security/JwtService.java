@@ -13,7 +13,6 @@ import java.util.Date;
 
 @Service
 public class JwtService {
-
     private final SecretKey key;
     private final long expirationSeconds;
 

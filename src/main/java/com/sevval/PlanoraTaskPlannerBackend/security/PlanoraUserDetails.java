@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.List;
 
 public class PlanoraUserDetails implements UserDetails {
-
     private final Long id;
     private final String email;
     private final String password;

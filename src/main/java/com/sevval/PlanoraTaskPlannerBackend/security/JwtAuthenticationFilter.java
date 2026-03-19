@@ -39,9 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Long userId = jwtService.parseUserId(token);
 
             if (SecurityContextHolder.getContext().getAuthentication() == null) {
-                // Token subject=userId. Şimdilik principal içinde id'yi taşıyoruz (role modeliniz yok).
                 UserDetails principal = new PlanoraUserDetails(userId, String.valueOf(userId), "");
-
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         principal,
                         null,
@@ -51,9 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (JwtException | IllegalArgumentException e) {
-            // token invalid -> auth set edilmez
         }
-
         filterChain.doFilter(request, response);
     }
 }
