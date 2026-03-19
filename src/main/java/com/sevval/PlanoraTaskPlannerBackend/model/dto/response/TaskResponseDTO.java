@@ -15,6 +15,7 @@ public record TaskResponseDTO(
         Boolean isCompleted,
         CategoryResponseDTO category,
         TagResponseDTO tag,
-        PriorityResponseDTO priority
+        PriorityResponseDTO priority,
+        Integer pomodoroCount
 ) {
 }
