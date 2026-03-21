@@ -12,5 +12,7 @@ public interface PomodoroRepository extends JpaRepository<Pomodoro, Long> {
     List<Pomodoro> findAllByTaskId(Long taskId);
     List<Pomodoro> findAllByTaskUserId(Long userId);
     List<Pomodoro> findAllByTaskUserIdAndStartTimeBetween(Long userId, LocalDateTime from, LocalDateTime to);
-}
 
+    @org.springframework.data.jpa.repository.Query("SELECT SUM(p.durationInMinutes) FROM Pomodoro p WHERE p.task.user.id = :userId")
+    Long sumDurationByUserId(@org.springframework.data.repository.query.Param("userId") Long userId);
+}
