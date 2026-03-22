@@ -25,9 +25,11 @@ public class TaskController {
     public List<TaskResponseDTO> list(
             @PathVariable Long userId,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) Boolean completed
     ) {
-        return taskService.listTasks(userId, date, completed);
+        return taskService.listTasks(userId, date, startDate, endDate, completed);
     }
 
     @GetMapping("/{taskId}")
