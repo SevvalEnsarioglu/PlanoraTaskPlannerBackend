@@ -38,7 +38,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<TaskResponseDTO> listTasks(Long userId, LocalDate date, Boolean completed) {
+    public List<TaskResponseDTO> listTasks(Long userId, LocalDate date, LocalDate startDate, LocalDate endDate, Boolean completed) {
         enforceCurrentUser(userId);
         List<Task> tasks;
 
@@ -46,6 +46,13 @@ public class TaskServiceImpl implements TaskService {
             LocalDateTime start = date.atStartOfDay();
             LocalDateTime end = date.plusDays(1).atStartOfDay().minusNanos(1);
             tasks = taskRepository.findAllByUserIdAndDueDateBetween(userId, start, end);
+        } else if (startDate != null && endDate != null) {
+            LocalDateTime start = startDate.atStartOfDay();
+            LocalDateTime end = endDate.plusDays(1).atStartOfDay().minusNanos(1);
+            tasks = taskRepository.findAllByUserIdAndDueDateBetween(userId, start, end);
+        } else if (startDate != null) {
+            LocalDateTime start = startDate.atStartOfDay();
+            tasks = taskRepository.findAllByUserIdAndDueDateAfter(userId, start);
         } else if (completed != null) {
             tasks = taskRepository.findAllByUserIdAndIsCompleted(userId, completed);
         } else {
@@ -123,12 +130,14 @@ public class TaskServiceImpl implements TaskService {
         }
         task.setCategory(category);
 
-        Tag tag = null;
-        if (request.tagId() != null) {
-            tag = tagRepository.findByIdAndUserId(request.tagId(), userId)
-                    .orElseThrow(() -> new NotFoundException("Tag not found"));
+        java.util.List<Tag> tags = new java.util.ArrayList<>();
+        if (request.tagIds() != null && !request.tagIds().isEmpty()) {
+            tags = tagRepository.findAllByUserIdAndIdIn(userId, request.tagIds());
+            if (tags.size() != request.tagIds().size()) {
+                throw new NotFoundException("One or more tags not found");
+            }
         }
-        task.setTag(tag);
+        task.setTags(tags);
 
         Priority priority = null;
         if (request.priorityId() != null) {
