@@ -14,6 +14,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     Optional<Task> findByIdAndUserId(Long id, Long userId);
     List<Task> findAllByUserIdAndDueDateBetween(Long userId, LocalDateTime start, LocalDateTime end);
     List<Task> findAllByUserIdAndIsCompleted(Long userId, Boolean isCompleted);
+    List<Task> findAllByUserIdAndDueDateAfter(Long userId, LocalDateTime date);
 
     long countByUserIdAndIsCompletedTrue(Long userId);
     long countByUserIdAndIsCompletedTrueAndDueDateBetween(Long userId, java.time.LocalDateTime start, java.time.LocalDateTime end);
