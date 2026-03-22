@@ -7,7 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface TaskService {
-    List<TaskResponseDTO> listTasks(Long userId, LocalDate date, Boolean completed);
+    List<TaskResponseDTO> listTasks(Long userId, LocalDate date, LocalDate startDate, LocalDate endDate, Boolean completed);
     TaskResponseDTO getTask(Long userId, Long taskId);
     TaskResponseDTO createTask(Long userId, TaskRequestDTO request);
     TaskResponseDTO updateTask(Long userId, Long taskId, TaskRequestDTO request);
