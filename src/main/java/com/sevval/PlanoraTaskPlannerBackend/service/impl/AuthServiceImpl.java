@@ -55,6 +55,18 @@ public class AuthServiceImpl implements AuthService {
         String token = jwtService.generateToken(user.getId());
         return new LoginResponseDTO(token, user.getUsername(), "Login successful");
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public UserResponseDTO getCurrentUser() {
+        Long userId = com.sevval.PlanoraTaskPlannerBackend.security.SecurityUtil.currentUserIdOrNull();
+        if (userId == null) {
+            throw new NotFoundException("User not authenticated");
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        return userMapper.toResponseDTO(user);
+    }
 }
 
 
