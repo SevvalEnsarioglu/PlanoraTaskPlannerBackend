@@ -8,6 +8,7 @@ import com.sevval.PlanoraTaskPlannerBackend.model.dto.response.UserResponseDTO;
 public interface AuthService {
     UserResponseDTO register(RegisterRequestDTO request);
     LoginResponseDTO login(LoginRequestDTO request);
+    UserResponseDTO getCurrentUser();
 }
 
 
