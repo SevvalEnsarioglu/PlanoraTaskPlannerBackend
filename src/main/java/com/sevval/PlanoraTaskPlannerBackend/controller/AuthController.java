@@ -27,6 +27,11 @@ public class AuthController {
     public LoginResponseDTO login(@RequestBody @Valid LoginRequestDTO request) {
         return authService.login(request);
     }
+
+    @GetMapping("/me")
+    public UserResponseDTO getCurrentUser() {
+        return authService.getCurrentUser();
+    }
 }
 
 
