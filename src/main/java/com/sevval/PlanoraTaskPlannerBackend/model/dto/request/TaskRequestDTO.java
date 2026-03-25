@@ -9,7 +9,7 @@ public record TaskRequestDTO(
         LocalDateTime dueDate,
         Boolean isCompleted,
         Long categoryId,
-        Long tagId,
+        java.util.List<Long> tagIds,
         Long priorityId
 ) {
 }

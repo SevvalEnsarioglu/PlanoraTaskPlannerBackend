@@ -14,7 +14,7 @@ public record TaskResponseDTO(
         LocalDateTime dueDate,
         Boolean isCompleted,
         CategoryResponseDTO category,
-        TagResponseDTO tag,
+        java.util.List<TagResponseDTO> tags,
         PriorityResponseDTO priority,
         Integer pomodoroCount
 ) {

@@ -25,7 +25,7 @@ public class Tag extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ManyToMany(mappedBy = "tags")
     @Builder.Default
     private List<Task> tasks = new ArrayList<>();
 }
