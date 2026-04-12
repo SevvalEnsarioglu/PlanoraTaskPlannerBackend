@@ -9,6 +9,6 @@ public interface AuthService {
     UserResponseDTO register(RegisterRequestDTO request);
     LoginResponseDTO login(LoginRequestDTO request);
     UserResponseDTO getCurrentUser();
+    UserResponseDTO updateUser(com.sevval.PlanoraTaskPlannerBackend.model.dto.request.UserRequestDTO request);
 }
-
 

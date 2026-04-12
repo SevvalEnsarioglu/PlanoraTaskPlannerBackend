@@ -67,6 +67,22 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new NotFoundException("User not found"));
         return userMapper.toResponseDTO(user);
     }
-}
 
+    @Override
+    public UserResponseDTO updateUser(com.sevval.PlanoraTaskPlannerBackend.model.dto.request.UserRequestDTO request) {
+        Long userId = com.sevval.PlanoraTaskPlannerBackend.security.SecurityUtil.currentUserIdOrNull();
+        if (userId == null) {
+            throw new NotFoundException("User not authenticated");
+        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+        
+        if (request.name() != null) user.setName(request.name());
+        if (request.surname() != null) user.setSurname(request.surname());
+        if (request.phoneNumber() != null) user.setPhoneNumber(request.phoneNumber());
+        
+        User saved = userRepository.save(user);
+        return userMapper.toResponseDTO(saved);
+    }
+}
 
