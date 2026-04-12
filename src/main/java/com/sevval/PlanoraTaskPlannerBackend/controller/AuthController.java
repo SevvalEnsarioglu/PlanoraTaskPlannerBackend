@@ -32,6 +32,10 @@ public class AuthController {
     public UserResponseDTO getCurrentUser() {
         return authService.getCurrentUser();
     }
-}
 
+    @PutMapping("/me")
+    public UserResponseDTO updateCurrentUser(@RequestBody @Valid com.sevval.PlanoraTaskPlannerBackend.model.dto.request.UserRequestDTO request) {
+        return authService.updateUser(request);
+    }
+}
 
