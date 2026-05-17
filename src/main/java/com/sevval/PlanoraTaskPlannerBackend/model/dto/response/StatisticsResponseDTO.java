@@ -6,6 +6,10 @@ public record StatisticsResponseDTO(
         long totalCompletedTasks,
         long weeklyCompletedTasks,
         Map<String, Long> categoryDistribution,
-        long totalPomodoroMinutes
+        long totalPomodoroMinutes,
+        long pendingTasks,
+        int dailyStreak,
+        double goalCompletionRate,
+        Map<String, Long> weeklyProductivity
 ) {
 }
