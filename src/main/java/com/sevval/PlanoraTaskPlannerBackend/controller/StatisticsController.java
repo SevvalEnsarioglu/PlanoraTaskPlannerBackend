@@ -1,5 +1,6 @@
 package com.sevval.PlanoraTaskPlannerBackend.controller;
 
+import com.sevval.PlanoraTaskPlannerBackend.model.dto.response.HeatmapResponseDTO;
 import com.sevval.PlanoraTaskPlannerBackend.model.dto.response.StatisticsResponseDTO;
 import com.sevval.PlanoraTaskPlannerBackend.service.StatisticsService;
 import lombok.RequiredArgsConstructor;
@@ -17,5 +18,13 @@ public class StatisticsController {
     @GetMapping
     public StatisticsResponseDTO getUserStatistics(@PathVariable Long userId) {
         return statisticsService.getUserStatistics(userId);
+    }
+
+    @GetMapping("/heatmap")
+    public HeatmapResponseDTO getHeatmap(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "84") int days
+    ) {
+        return statisticsService.getHeatmap(userId, days);
     }
 }
