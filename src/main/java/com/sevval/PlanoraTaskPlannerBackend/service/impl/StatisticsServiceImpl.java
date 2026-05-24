@@ -1,6 +1,7 @@
 package com.sevval.PlanoraTaskPlannerBackend.service.impl;
 
 import com.sevval.PlanoraTaskPlannerBackend.exception.NotFoundException;
+import com.sevval.PlanoraTaskPlannerBackend.model.dto.response.HeatmapResponseDTO;
 import com.sevval.PlanoraTaskPlannerBackend.model.dto.response.StatisticsResponseDTO;
 import com.sevval.PlanoraTaskPlannerBackend.model.entity.Task;
 import com.sevval.PlanoraTaskPlannerBackend.repository.PomodoroRepository;
@@ -127,5 +128,38 @@ public class StatisticsServiceImpl implements StatisticsService {
             throw new NotFoundException("User not found or access denied");
         }
     }
-}
 
+    /**
+     * Son `days` günün günlük tamamlanma sayılarını döndürür.
+     * Her gün için "YYYY-MM-DD" → int sayısı maplenir; sıfır olanlar da dahil edilir.
+     */
+    @Override
+    public HeatmapResponseDTO getHeatmap(Long userId, int days) {
+        enforceCurrentUser(userId);
+        ZoneId zone = ZoneId.systemDefault();
+
+        LocalDate today = LocalDate.now(zone);
+        LocalDate from  = today.minusDays(days - 1);
+
+        Instant start = from.atStartOfDay(zone).toInstant();
+        Instant end   = today.plusDays(1).atStartOfDay(zone).toInstant();
+
+        List<Task> completed = taskRepository
+                .findAllByUserIdAndIsCompletedTrueAndUpdatedAtBetween(userId, start, end);
+
+        // Tüm günleri 0 ile başlat
+        Map<String, Integer> dailyCounts = new LinkedHashMap<>();
+        for (int i = days - 1; i >= 0; i--) {
+            dailyCounts.put(today.minusDays(i).toString(), 0);
+        }
+
+        // Günlere dağıt
+        for (Task t : completed) {
+            if (t.getUpdatedAt() == null) continue;
+            String dateKey = t.getUpdatedAt().atZone(zone).toLocalDate().toString();
+            dailyCounts.computeIfPresent(dateKey, (k, v) -> v + 1);
+        }
+
+        return new HeatmapResponseDTO(dailyCounts);
+    }
+}
