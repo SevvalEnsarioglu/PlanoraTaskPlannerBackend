@@ -13,11 +13,11 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/api/v1/**") // Tüm API isteklerine izin ver
-                        .allowedOrigins("*") // React Native veya Web tarafından gelen isteklere (şimdilik) full izin veriliyor. Prod ortamında spesifik origin girilmeli.
+                registry.addMapping("/api/v1/**")
+                        .allowedOrigins("*")
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
-                        .maxAge(3600); // 1 saat cache
+                        .maxAge(3600);
             }
         };
     }

@@ -50,7 +50,6 @@ public class PomodoroServiceImpl implements PomodoroService {
         List<Pomodoro> pomodoros;
 
         if (taskId != null) {
-            // Ownership check via Task
             taskRepository.findByIdAndUserId(taskId, userId)
                     .orElseThrow(() -> new NotFoundException("Task not found"));
             pomodoros = pomodoroRepository.findAllByTaskId(taskId);

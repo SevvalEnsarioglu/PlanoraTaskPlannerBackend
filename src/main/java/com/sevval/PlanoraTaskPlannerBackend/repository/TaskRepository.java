@@ -26,10 +26,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     @Query("SELECT c.name, COUNT(t) FROM Task t JOIN t.category c WHERE t.user.id = :userId AND t.isCompleted = true GROUP BY c.name")
     List<Object[]> countCompletedTasksByCategory(@Param("userId") Long userId);
 
-    // Haftalık üretkenlik: Bu haftaki tamamlanan görevleri getir (updatedAt = tamamlanma zamanı)
     List<Task> findAllByUserIdAndIsCompletedTrueAndUpdatedAtBetween(Long userId, Instant start, Instant end);
 
-    // Streak hesabı: tüm zamanlar tamamlanan görevler (updatedAt bazlı)
     List<Task> findAllByUserIdAndIsCompletedTrueOrderByUpdatedAtDesc(Long userId);
 }
 

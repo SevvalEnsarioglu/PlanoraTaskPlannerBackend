@@ -26,7 +26,6 @@ public class StatisticsServiceImpl implements StatisticsService {
     private final TaskRepository taskRepository;
     private final PomodoroRepository pomodoroRepository;
 
-    // Türkçe gün kısaltmaları: Pazartesi(1) → Paz(7)
     private static final String[] TR_DAYS = {"Pzt", "Sal", "Çar", "Per", "Cum", "Cmt", "Paz"};
 
     @Override
@@ -35,10 +34,8 @@ public class StatisticsServiceImpl implements StatisticsService {
 
         ZoneId zone = ZoneId.systemDefault();
 
-        // ── 1. Toplam tamamlanan ──────────────────────────────────────────────
         long totalCompleted = taskRepository.countByUserIdAndIsCompletedTrue(userId);
 
-        // ── 2. Haftalık tamamlanan (dueDate bazlı, mevcut mantık) ────────────
         LocalDateTime startOfWeekLdt = LocalDate.now()
                 .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
                 .atStartOfDay();
@@ -46,7 +43,6 @@ public class StatisticsServiceImpl implements StatisticsService {
         long weeklyCompleted = taskRepository
                 .countByUserIdAndIsCompletedTrueAndDueDateBetween(userId, startOfWeekLdt, endOfWeekLdt);
 
-        // ── 3. Kategori dağılımı ──────────────────────────────────────────────
         List<Object[]> categoryCounts = taskRepository.countCompletedTasksByCategory(userId);
         Map<String, Long> categoryDistribution = new LinkedHashMap<>();
         for (Object[] result : categoryCounts) {
@@ -55,14 +51,11 @@ public class StatisticsServiceImpl implements StatisticsService {
             categoryDistribution.put(categoryName != null ? categoryName : "Kategorisiz", count);
         }
 
-        // ── 4. Toplam pomodoro süresi ─────────────────────────────────────────
         Long totalPomodoro = pomodoroRepository.sumDurationByUserId(userId);
         long pomodoroMinutes = (totalPomodoro != null) ? totalPomodoro : 0L;
 
-        // ── 5. Bekleyen görev sayısı ──────────────────────────────────────────
         long pendingTasks = taskRepository.countByUserIdAndIsCompletedFalse(userId);
 
-        // ── 6. Haftalık üretkenlik (Pzt→Paz kırılımı, updatedAt bazlı) ───────
         Instant weekStart = startOfWeekLdt.atZone(zone).toInstant();
         Instant weekEnd   = endOfWeekLdt.atZone(zone).toInstant();
         List<Task> weeklyTasks = taskRepository
@@ -73,17 +66,15 @@ public class StatisticsServiceImpl implements StatisticsService {
         for (Task t : weeklyTasks) {
             if (t.getUpdatedAt() == null) continue;
             DayOfWeek dow = t.getUpdatedAt().atZone(zone).getDayOfWeek();
-            String key = TR_DAYS[dow.getValue() - 1]; // MONDAY=1 → idx 0
+            String key = TR_DAYS[dow.getValue() - 1];
             weeklyProductivity.merge(key, 1L, Long::sum);
         }
 
-        // ── 7. Hedef tamamlanma oranı (bu haftaki tamamlanan / toplam) ────────
         long weeklyTotal = weeklyCompleted + taskRepository.countByUserIdAndIsCompletedFalse(userId);
         double goalCompletionRate = weeklyTotal > 0
                 ? Math.round((weeklyCompleted * 100.0 / weeklyTotal) * 10.0) / 10.0
                 : 0.0;
 
-        // ── 8. Günlük seri (ard arda tamamlanan gün sayısı) ──────────────────
         int dailyStreak = computeDailyStreak(userId, zone);
 
         return new StatisticsResponseDTO(
@@ -98,21 +89,15 @@ public class StatisticsServiceImpl implements StatisticsService {
         );
     }
 
-    /**
-     * Son gün itibariyle ard arda kaç gün boyunca en az 1 görev tamamlanmış.
-     * updatedAt alanı tamamlanma tarihi olarak kullanılır.
-     */
     private int computeDailyStreak(Long userId, ZoneId zone) {
         List<Task> completed = taskRepository.findAllByUserIdAndIsCompletedTrueOrderByUpdatedAtDesc(userId);
         if (completed.isEmpty()) return 0;
 
-        // Benzersiz tamamlanma günleri kümesi (LocalDate)
         Set<LocalDate> completedDays = completed.stream()
                 .filter(t -> t.getUpdatedAt() != null)
                 .map(t -> t.getUpdatedAt().atZone(zone).toLocalDate())
                 .collect(Collectors.toSet());
 
-        // Bugünden geriye say
         LocalDate cursor = LocalDate.now();
         int streak = 0;
         while (completedDays.contains(cursor)) {
@@ -129,10 +114,6 @@ public class StatisticsServiceImpl implements StatisticsService {
         }
     }
 
-    /**
-     * Son `days` günün günlük tamamlanma sayılarını döndürür.
-     * Her gün için "YYYY-MM-DD" → int sayısı maplenir; sıfır olanlar da dahil edilir.
-     */
     @Override
     public HeatmapResponseDTO getHeatmap(Long userId, int days) {
         enforceCurrentUser(userId);
@@ -147,13 +128,11 @@ public class StatisticsServiceImpl implements StatisticsService {
         List<Task> completed = taskRepository
                 .findAllByUserIdAndIsCompletedTrueAndUpdatedAtBetween(userId, start, end);
 
-        // Tüm günleri 0 ile başlat
         Map<String, Integer> dailyCounts = new LinkedHashMap<>();
         for (int i = days - 1; i >= 0; i--) {
             dailyCounts.put(today.minusDays(i).toString(), 0);
         }
 
-        // Günlere dağıt
         for (Task t : completed) {
             if (t.getUpdatedAt() == null) continue;
             String dateKey = t.getUpdatedAt().atZone(zone).toLocalDate().toString();

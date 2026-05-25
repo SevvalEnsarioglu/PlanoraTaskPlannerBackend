@@ -51,7 +51,6 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("Invalid credentials");
         }
 
-        // JWT subject = userId
         String token = jwtService.generateToken(user.getId());
         return new LoginResponseDTO(token, user.getUsername(), "Login successful");
     }
